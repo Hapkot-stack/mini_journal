@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f4f6">
+  <title>Fieldnotes — Trading research journal</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Fieldnotes home">
+        <span class="brand-mark" aria-hidden="true">F</span>
+        <span>fieldnotes<span class="brand-dot">.</span></span>
+      </a>
+      <div class="topbar-meta"><span class="status-dot"></span> Private, local journal</div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">TRADING RESEARCH JOURNAL</p>
+          <h1>Make every setup count.</h1>
+          <p class="intro-copy">Capture the conditions. Let the history speak.</p>
+        </div>
+        <div class="dataset-switch" role="group" aria-label="Journal dataset">
+          <button class="dataset-button active" type="button" data-dataset="real" aria-pressed="true">Real <span id="real-count">0</span></button>
+          <button class="dataset-button" type="button" data-dataset="backtest" aria-pressed="false">Backtest <span id="backtest-count">0</span></button>
+        </div>
+      </section>
+
+      <nav class="section-tabs" aria-label="Journal sections">
+        <button type="button" class="section-tab active" data-panel="journal-panel">Journal</button>
+        <button type="button" class="section-tab" data-panel="analytics-panel">Analytics</button>
+      </nav>
+
+      <section id="journal-panel" class="panel active">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">QUICK CAPTURE</p>
+            <h2 id="form-heading">New setup</h2>
+          </div>
+          <span class="step-label"><span class="step-number">01</span> STRUCTURED RECORD</span>
+        </div>
+
+        <form id="record-form" class="record-form">
+          <input type="hidden" id="record-id">
+          <div class="form-grid">
+            <label class="field">
+              <span>Pair</span>
+              <input id="pair" name="pair" list="pair-options" placeholder="e.g. EURUSD" maxlength="20" required autocomplete="off">
+              <datalist id="pair-options">
+                <option value="EURUSD"></option><option value="GBPUSD"></option><option value="GBPJPY"></option>
+                <option value="USDJPY"></option><option value="AUDUSD"></option><option value="XAUUSD"></option>
+              </datalist>
+            </label>
+            <label class="field">
+              <span>Timeframe</span>
+              <select id="timeframe" name="timeframe">
+                <option value="4H">4H</option>
+                <option value="15M">15M</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>4H direction</span>
+              <select id="direction" name="direction">
+                <option>Uptrend</option><option>Downtrend</option><option>Range</option>
+              </select>
+            </label>
+            <label class="field conditional-field" id="phase-field">
+              <span>15M phase</span>
+              <select id="phase" name="phase"></select>
+            </label>
+            <label class="field">
+              <span id="poi-label">4H POI type</span>
+              <select id="poi" name="poi">
+                <option>Source Candle</option><option>Rejection Block</option>
+              </select>
+            </label>
+            <label class="field">
+              <span id="liquidity-label">4H liquidity type</span>
+              <select id="liquidity" name="liquidity">
+                <option>Internal Structure</option><option>Engineered</option><option>MSS Liquidity</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Entry model</span>
+              <select id="model" name="model">
+                <option value="Model 1">Model 1 — Tap level</option>
+                <option value="Model 2">Model 2 — MSS entry</option>
+                <option value="Model 3">Model 3 — Longest-wick engulf</option>
+                <option value="Model 4">Model 4 — Confirmation + retracement</option>
+              </select>
+            </label>
+
+            <div class="model-fields conditional-field" id="model-3-fields">
+              <label class="field">
+                <span>Retracement</span>
+                <select id="model-3-retracement" name="model3Retracement">
+                  <option>No</option>
+                  <option>Yes</option>
+                </select>
+              </label>
+            </div>
+            <div class="model-fields conditional-field" id="model-4-fields">
+              <label class="field">
+                <span>Liquidity taken on confirmation leg?</span>
+                <select id="confirmation-liquidity" name="confirmationLiquidity">
+                  <option>Yes</option><option>No</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Retracement level</span>
+                <select id="retracement-level" name="retracementLevel">
+                  <option>OB</option><option>Source Candle</option><option>Mitigation Block</option>
+                  <option>FVG</option><option>IFVG</option><option>MSS Origin</option><option>Other</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Outcome</span>
+              <select id="outcome" name="outcome">
+                <option>Missed</option><option>Win</option><option>Loss</option><option>Never Reached Zone</option>
+              </select>
+            </label>
+            <label class="field conditional-field" id="r-field">
+              <span>Result (R) <span class="optional">optional</span></span>
+              <input id="result-r" name="resultR" type="number" step="0.01" inputmode="decimal" placeholder="e.g. 2.5">
+            </label>
+          </div>
+
+          <div id="excursion-fields" class="excursion-fields conditional-field">
+            <div class="field-group">
+              <div class="field-group-heading">
+                <span class="field-group-title">SL retracement</span>
+                <span class="field-hint">Furthest retracement toward SL</span>
+              </div>
+              <div class="check-row">
+                <label class="check-pill"><input type="checkbox" name="sl25" value="25"><span>25%</span></label>
+                <label class="check-pill"><input type="checkbox" name="sl50" value="50"><span>50%</span></label>
+                <label class="check-pill"><input type="checkbox" name="sl75" value="75"><span>75%</span></label>
+              </div>
+              <p class="field-hint">100% is derived from Loss outcomes.</p>
+            </div>
+            <div class="field-group">
+              <div class="field-group-heading">
+                <span class="field-group-title">TP progression</span>
+                <span class="field-hint">Furthest progress toward TP</span>
+              </div>
+              <div class="check-row">
+                <label class="check-pill"><input type="checkbox" name="tp25" value="25"><span>25%</span></label>
+                <label class="check-pill"><input type="checkbox" name="tp50" value="50"><span>50%</span></label>
+                <label class="check-pill"><input type="checkbox" name="tp75" value="75"><span>75%</span></label>
+              </div>
+              <p class="field-hint">100% is derived from Win outcomes.</p>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <p id="entry-hint" class="entry-hint">Tap the predefined POI level, then enter immediately. No MSS required.</p>
+            <div class="form-actions">
+              <button id="cancel-edit" class="button button-secondary hidden" type="button">Cancel</button>
+              <button class="button button-primary" type="submit"><span id="submit-label">Save setup</span><span aria-hidden="true">↗</span></button>
+            </div>
+          </div>
+        </form>
+
+        <div class="list-heading">
+          <div><p class="eyebrow">YOUR DATA</p><h2>Recent setups</h2></div>
+          <span id="list-count" class="count-label">0 records</span>
+        </div>
+        <div id="records-list" class="records-list"></div>
+      </section>
+
+      <section id="analytics-panel" class="panel">
+        <div class="section-heading analytics-heading">
+          <div>
+            <p class="eyebrow">HISTORICAL FREQUENCY, NOT PREDICTIONS</p>
+            <h2>Read the patterns.</h2>
+            <p class="section-subtitle">Filter from pair and context down to the exact entry conditions.</p>
+          </div>
+          <span class="step-label"><span class="step-number">02</span> FILTER &amp; COMPARE</span>
+        </div>
+
+        <div class="filter-card">
+          <div class="filter-heading"><span>ANALYSIS FILTERS</span><button id="clear-filters" class="text-button" type="button">Clear all</button></div>
+          <div class="filter-grid">
+            <label class="field"><span>Pair</span><select id="filter-pair"><option value="">All pairs</option></select></label>
+            <label class="field"><span>Timeframe</span><select id="filter-timeframe"><option>4H</option><option>15M</option></select></label>
+            <label class="field"><span>4H direction</span><select id="filter-direction"><option value="">All directions</option><option>Uptrend</option><option>Downtrend</option><option>Range</option></select></label>
+            <label class="field"><span>15M phase</span><select id="filter-phase"><option value="">All phases</option></select></label>
+            <label class="field"><span>POI</span><select id="filter-poi"><option value="">All POIs</option><option>Source Candle</option><option>Rejection Block</option></select></label>
+            <label class="field"><span>Liquidity</span><select id="filter-liquidity"><option value="">All liquidity types</option><option>Internal Structure</option><option>Engineered</option><option>MSS Liquidity</option></select></label>
+            <label class="field"><span>Entry model</span><select id="filter-model"><option value="">All models</option><option>Model 1</option><option>Model 2</option><option>Model 3</option><option>Model 4</option></select></label>
+            <label class="field model-filter" id="filter-model3-wrap"><span>Model 3 · Retracement</span><select id="filter-model3-retracement"><option value="">Yes + No</option><option>Yes</option><option>No</option></select></label>
+            <label class="field model-filter" id="filter-model4-liquidity-wrap"><span>Model 4 · Confirmation liquidity</span><select id="filter-model4-liquidity"><option value="">Yes + No</option><option>Yes</option><option>No</option></select></label>
+            <label class="field model-filter" id="filter-model4-level-wrap"><span>Model 4 · Retracement level</span><select id="filter-model4-level"><option value="">All retracement levels</option><option>OB</option><option>Source Candle</option><option>Mitigation Block</option><option>FVG</option><option>IFVG</option><option>MSS Origin</option><option>Other</option></select></label>
+            <label class="field"><span>Outcome</span><select id="filter-outcome"><option value="">All outcomes</option><option>Missed</option><option>Win</option><option>Loss</option><option>Never Reached Zone</option></select></label>
+          </div>
+        </div>
+        <p class="filter-hint">Start broad, then narrow by pair, 4H context and 15M phase. Model 3 and 4 filters let you compare their entry variations directly.</p>
+
+        <div class="stats-grid">
+          <article class="stat-card"><span>Occurrences</span><strong id="stat-occurrences">0</strong><small>Matching records</small></article>
+          <article class="stat-card"><span>Win outcomes / share</span><strong id="stat-wins">0 <em>(0%)</em></strong><small>Of all matching records</small></article>
+          <article class="stat-card"><span>Loss outcomes / share</span><strong id="stat-losses">0 <em>(0%)</em></strong><small>Of all matching records</small></article>
+          <article class="stat-card"><span>Average R</span><strong id="stat-average-r">—</strong><small>Entered outcomes with R recorded</small></article>
+        </div>
+        <section class="analytics-section outcome-section">
+          <div class="analytics-title"><div><p class="eyebrow">ALL FOUR OUTCOMES</p><h3>What happened?</h3></div><span class="section-note">Counts and share of matching records</span></div>
+          <div class="outcome-grid" id="outcome-breakdown"></div>
+        </section>
+
+        <section class="analytics-section">
+          <div class="analytics-title"><div><p class="eyebrow">LEVEL 1–5</p><h3>Combination frequency</h3></div><span class="section-note">Observed records, grouped by selected timeframe</span></div>
+          <div class="table-wrap"><table><thead id="combination-head"></thead><tbody id="combination-body"></tbody></table></div>
+        </section>
+
+        <section class="analytics-section">
+          <div class="analytics-title"><div><p class="eyebrow">MODEL COMPARISON</p><h3>Entry model analysis</h3></div><span class="section-note">Win/loss shares use all occurrences; select a model to drill down</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Model</th><th>Frequency</th><th>Wins</th><th>Win %</th><th>Losses</th><th>Loss %</th><th>Missed</th><th>Never reached</th><th>Average R</th></tr></thead><tbody id="model-body"></tbody></table></div>
+        </section>
+
+        <section class="analytics-section model-detail-section" id="model3-analysis">
+          <div class="analytics-title"><div><p class="eyebrow">MODEL 3 · ENGULF ENTRY</p><h3>Retracement comparison</h3></div><span class="section-note">Compare entering after engulf vs waiting for candle-head retracement</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Retracement</th><th>Frequency</th><th>Wins</th><th>Win %</th><th>Losses</th><th>Loss %</th><th>Missed</th><th>Never reached</th><th>Average R</th></tr></thead><tbody id="model3-body"></tbody></table></div>
+        </section>
+
+        <section class="analytics-section model-detail-section" id="model4-analysis">
+          <div class="analytics-title"><div><p class="eyebrow">MODEL 4 · CONFIRMATION + RETRACEMENT</p><h3>Confirmation-leg liquidity</h3></div><span class="section-note">Compare the two confirmation-leg conditions</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Liquidity taken</th><th>Frequency</th><th>Wins</th><th>Win %</th><th>Losses</th><th>Loss %</th><th>Missed</th><th>Never reached</th><th>Average R</th></tr></thead><tbody id="model4-liquidity-body"></tbody></table></div>
+          <div class="analytics-title model4-level-title"><div><p class="eyebrow">MODEL 4 · ENTRY LEVEL</p><h3>Retracement-level comparison</h3></div><span class="section-note">Liquidity condition → level reached</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Liquidity taken</th><th>Retracement level</th><th>Frequency</th><th>Wins</th><th>Win %</th><th>Losses</th><th>Loss %</th><th>Missed</th><th>Never reached</th><th>Average R</th></tr></thead><tbody id="model4-level-body"></tbody></table></div>
+        </section>
+
+        <section class="analytics-section">
+          <div class="analytics-title"><div><p class="eyebrow">15M RESEARCH</p><h3>Phase analysis</h3></div><span class="section-note">Win/loss shares use phase occurrences · Phase → POI → Liquidity → Entry model</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Phase</th><th>Frequency</th><th>Wins</th><th>Win %</th><th>Losses</th><th>Loss %</th><th>Missed</th><th>Never reached</th><th>Average R</th><th>POI mix</th><th>Liquidity mix</th><th>Model mix</th></tr></thead><tbody id="phase-body"></tbody></table></div>
+        </section>
+
+        <div class="excursion-grid">
+          <section class="analytics-section excursion-section">
+            <div class="analytics-title"><div><p class="eyebrow">FILTERED 15M ENTERED TRADES</p><h3>SL retracement</h3></div><span class="section-note">Counts and eventual outcomes for records reaching each threshold</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Threshold</th><th>Frequency</th><th>Eventually win</th><th>Eventually loss</th></tr></thead><tbody id="sl-body"></tbody></table></div>
+          </section>
+          <section class="analytics-section excursion-section">
+            <div class="analytics-title"><div><p class="eyebrow">FILTERED 15M ENTERED TRADES</p><h3>TP progression</h3></div><span class="section-note">Counts and eventual outcomes for records reaching each threshold</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Threshold</th><th>Frequency</th><th>Eventually TP</th><th>Did not reach TP</th></tr></thead><tbody id="tp-body"></tbody></table></div>
+          </section>
+        </div>
+        <p id="analytics-empty" class="empty-state hidden">No matching records yet. Save setups in this dataset to build your research history.</p>
+      </section>
+    </main>
+    <footer class="app-footer"><span>FIELDNOTES <span class="brand-dot">·</span> TRADING RESEARCH</span><span>Saved in this browser only</span></footer>
+  </div>
+</body>
+</html>
